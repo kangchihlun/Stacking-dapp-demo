@@ -392,7 +392,7 @@ const App = () => {
             redistributeRewards={
               page === 1 ? redistributeRewards : redistributeCustomRewards
             }
-            claimTst={claimTst}
+            claimTst={claimTst(page)}
             page={page}
           />
         </div>

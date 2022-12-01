@@ -1,4 +1,5 @@
 const Web3 = require('web3');
+const TestTokenClaimer = artifacts.require('TestTokenClaimer');
 const LPFactory = artifacts.require('LPFactory');
 const RewardToken = artifacts.require('RewardToken');
 const StakingManager = artifacts.require('StakingManager');
@@ -30,25 +31,33 @@ async function grantRewardTokenMinterRole(
 
 
 module.exports = async function(deployer, network, accounts) {
-  // await deployer.deploy(TokenStaking, testToken.address);
 
-  await deployer.deploy(LPFactory,"LP1","LP1",(BigInt("1000000000000")).toString());
+  // deploy test token claimer contract
+  await deployer.deploy(TestTokenClaimer);
+  const TestTokenClaimer_deployed = await TestTokenClaimer.deployed();
+
+  // deploy 3 test token for staking
+  const token_total_supply = (BigInt("10000000000000"))
+  await deployer.deploy(LPFactory,"LP1","LP1",token_total_supply.toString());
   const LP1_deployed = await LPFactory.deployed();
-  await deployer.deploy(LPFactory,"LP2","LP2",(BigInt("1000000000000")).toString());
+  await deployer.deploy(LPFactory,"LP2","LP2",token_total_supply.toString());
   const LP2_deployed = await LPFactory.deployed();
-  await deployer.deploy(LPFactory,"LP3","LP3",(BigInt("1000000000000")).toString());
+  await deployer.deploy(LPFactory,"LP3","LP3",token_total_supply.toString());
   const LP3_deployed = await LPFactory.deployed();
 
   const LP1Address = LP1_deployed.address;
   const LP2Address = LP2_deployed.address;
   const LP3Address = LP3_deployed.address;
 
-  console.log(`LP3Address ${LP3Address}`);
-
+  // test token claimer has all 3 test token
+  const amount = Web3.utils.toWei("1000000000000", 'ether')
+  await LP1_deployed.transfer(TestTokenClaimer_deployed.address, amount);
+  await LP2_deployed.transfer(TestTokenClaimer_deployed.address, amount);
+  await LP3_deployed.transfer(TestTokenClaimer_deployed.address, amount);
   
+  // deploy reward token
   await deployer.deploy(RewardToken);
   const rewardToken_deployed = await RewardToken.deployed();
-  console.log("RewardToken address:", rewardToken_deployed.address);
 
   await deployer.deploy(StakingManager,rewardToken_deployed.address,Web3.utils.toWei('200', 'ether'));
   const StakingManager_deployed = await StakingManager.deployed();
@@ -62,13 +71,14 @@ module.exports = async function(deployer, network, accounts) {
   await createStakingPool(StakingManager_deployed, LP2Address);
   await createStakingPool(StakingManager_deployed, LP3Address);
 
-  // //deploying staking contract, passing token address
-  // await deployer.deploy(TokenStaking, testToken.address);
-  // const tokenStaking = await TokenStaking.deployed();
+  console.log(`TestTokenClaimer Address ${TestTokenClaimer_deployed.address}`);
+  console.log(`LP1 token Address ${LP1Address}`);
+  console.log(`LP2 token Address ${LP2Address}`);
+  console.log(`LP3 token Address ${LP3Address}`);
+  console.log("RewardToken address:", rewardToken_deployed.address);
+  console.log("StakingManager address ", StakingManager_deployed.address);
 
-  // //transfer 500k TestToken to smart contract for rewards
-  // await testToken.transfer(tokenStaking.address, '500000000000000000000000');
-
-  //   sending 1000 TestTokens to User and Creator for test , investor is second address
-  //await testToken.transfer(accounts[1], '1000000000000000000000');
+  let amount_LP3 = await LP3_deployed.balanceOf(TestTokenClaimer_deployed.address)
+  console.log("TestTokenClaimer LP3 balance:")
+  console.log( BigInt(amount_LP3) )
 };
