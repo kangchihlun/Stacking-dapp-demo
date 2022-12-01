@@ -7,8 +7,9 @@ const Navigation = (props) => {
   const changePool = (val) => {
     if (val === poolStatus) {
     } else {
+      console.log(`setPoolStatus ${val}`);
       setPoolStatus(val);
-      props.changePage();
+      props.changePage(val);
     }
   };
 
@@ -37,6 +38,18 @@ const Navigation = (props) => {
         }}
       >
         {props.apy[1]}% (APY)
+      </button>
+      <button
+        className={
+          poolStatus === 'custom2'
+            ? classes.buttonActive
+            : classes.buttonNonActive
+        }
+        onClick={() => {
+          changePool('custom2');
+        }}
+      >
+        {props.apy[2]}% (APY)
       </button>
     </div>
   );

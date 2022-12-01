@@ -14,13 +14,15 @@ const App = () => {
   const [tokenStakingContract, setTokenStakingContract] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [contractBalance, setContractBalance] = useState('0');
-  const [totalStaked, setTotalStaked] = useState([0, 0]);
-  const [myStake, setMyStake] = useState([0, 0]);
+  const [totalStaked, setTotalStaked] = useState([0, 0 ,0]);
+  const [myStake, setMyStake] = useState([0, 0, 0]);
   const [appStatus, setAppStatus] = useState(true);
   const [loader, setLoader] = useState(false);
   const [userBalance, setUserBalance] = useState('0');
-  const [apy, setApy] = useState([0, 0]);
+  const [apy, setApy] = useState([0, 0, 0]);
   const [page, setPage] = useState(1);
+  // kang : pool name mapping table
+  const poolID = {"default":0,"custom":1,"custom2":2};
 
   useEffect(() => {
     //connecting to ethereum blockchain
@@ -114,8 +116,9 @@ const App = () => {
           myCustomStake.toString(),
           'Ether'
         );
-
-        setMyStake([convertedBalance, tempCustomdBalance]);
+        // Todo fetch 3rd staked balance
+        // kang added , has to change 
+        setMyStake([convertedBalance, tempCustomdBalance , tempCustomdBalance]);
 
         //checking totalStaked
         let tempTotalStaked = await tokenStaking.methods.totalStaked().call();
@@ -130,14 +133,17 @@ const App = () => {
           tempcustomTotalStaked.toString(),
           'Ether'
         );
-        setTotalStaked([convertedBalance, tempconvertedBalance]);
+
+        // Todo fetch 3rd total staked balance
+        // kang added 
+        setTotalStaked([convertedBalance, tempconvertedBalance , tempconvertedBalance]);
 
         //fetching APY values from contract
-        let tempApy =
-          ((await tokenStaking.methods.defaultAPY().call()) / 1000) * 365;
-        let tempcustomApy =
-          ((await tokenStaking.methods.customAPY().call()) / 1000) * 365;
-        setApy([tempApy, tempcustomApy]);
+        let tempApy = ((await tokenStaking.methods.defaultAPY().call()) / 1000) * 365;
+        let tempcustomApy = ((await tokenStaking.methods.customAPY().call()) / 1000) * 365;
+        // Kang added
+        let tempcustomApy2 = ((await tokenStaking.methods.customAPY().call()*0.45) / 1000) * 365;
+        setApy([tempApy, tempcustomApy, tempcustomApy2]);
       } else {
         setAppStatus(false);
         window.alert(
@@ -158,12 +164,9 @@ const App = () => {
     setInputValue(received);
   };
 
-  const changePage = () => {
-    if (page === 1) {
-      setPage(2);
-    } else if (page === 2) {
-      setPage(1);
-    }
+  const changePage = (_page) => {
+    console.log(_page)
+    setPage(poolID[_page]);
   };
 
   const stakeHandler = () => {
@@ -370,13 +373,13 @@ const App = () => {
         <div>
           <Staking
             account={account}
-            totalStaked={page === 1 ? totalStaked[0] : totalStaked[1]}
-            myStake={page === 1 ? myStake[0] : myStake[1]}
+            totalStaked={ totalStaked[page] }
+            myStake={ myStake[page]}
             userBalance={userBalance}
             unStakeHandler={unStakeHandler}
             stakeHandler={stakeHandler}
             inputHandler={inputHandler}
-            apy={page === 1 ? apy[0] : apy[1]}
+            apy={ apy[page] }
             page={page}
           />
         </div>

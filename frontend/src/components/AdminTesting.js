@@ -4,7 +4,7 @@ import classes from './AdminTesting.module.css';
 const AdminTesting = (props) => {
   return (
     <div className={classes.for_testing}>
-      <p>FOR TESTING PURPOSE ONLY</p>
+      
       <button onClick={props.claimTst}>Claim for 1000 Tst (User)</button>
       &nbsp; &nbsp;
       <button onClick={props.redistributeRewards}>
