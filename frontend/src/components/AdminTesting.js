@@ -18,7 +18,6 @@ const AdminTesting = (props) => {
           &nbsp; id: <b>{props.network.id}</b>
         </p>
         <p>Contract Balance: {props.contractBalance} TestToken (Tst) </p>
-        <p>Staking Contract address: {props.tokenStakingContract._address}</p>
       </div>
     </div>
   );

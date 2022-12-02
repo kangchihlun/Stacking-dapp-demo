@@ -62,7 +62,6 @@ const App = () => {
       //loading TestToken contract data
       // todo: load token data from staking manager
       const testTokenData = LPFactory.networks[networkId];
-      console.log(`-##-## ${poolToken[page]}`);
       let testTokenContract = null;
       let tokenClaimer = null;
       let tokenStaking = null;
@@ -116,21 +115,21 @@ const App = () => {
         setStakingManagerContract(tokenStaking);
 
         // fetch total staked
-        if(testTokenContract){
-          let totalStaked = await testTokenContract.methods
-          .balanceOf(tokenStakingData.address)
+        if(tokenStaking){
+          let totalStaked = await tokenStaking.methods
+          .getTotalStaked(page)
           .call();
           let convertedTotalBalance = window.web3.utils.fromWei(
             totalStaked.toString(),
             'Ether'
           );
           setContractBalance(convertedTotalBalance)
+          setTotalStaked([convertedTotalBalance,convertedTotalBalance,convertedTotalBalance]);
         }
         
-
         // fetch my total staked
         // not implemented yet
-        if(true){
+        if(tokenStaking){
           let myStake = await tokenStaking.methods
           .getStaked(page)
           .call();
@@ -142,21 +141,11 @@ const App = () => {
           setMyStake([convertedBalance, convertedBalance , convertedBalance]);
         }
         
-
-        //checking totalStaked
-        let tempTotalStaked = await tokenStaking.methods.getStaked(page).call();
-        let convertedBalance = window.web3.utils.fromWei(
-          tempTotalStaked.toString(),
-          'Ether'
-        );
-        setTotalStaked([tempTotalStaked,tempTotalStaked,tempTotalStaked]);
-
-
-        //  APY values from contract
+        //  Fake APY values 
         // let tempApy = ((await tokenStaking.methods.defaultAPY().call()) / 1000) * 365;
         // let tempcustomApy = ((await tokenStaking.methods.customAPY().call()) / 1000) * 365;
         // let tempcustomApy2 = ((await tokenStaking.methods.customAPY().call()*0.45) / 1000) * 365;
-        // setApy([tempApy, tempcustomApy, tempcustomApy2]);
+        setApy([50, 30, 20]);
 
 
       } else {
