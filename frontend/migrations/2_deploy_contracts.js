@@ -54,7 +54,13 @@ module.exports = async function(deployer, network, accounts) {
   await LP1_deployed.transfer(TestTokenClaimer_deployed.address, amount);
   await LP2_deployed.transfer(TestTokenClaimer_deployed.address, amount);
   await LP3_deployed.transfer(TestTokenClaimer_deployed.address, amount);
-  
+  // send recruter all 3 test token
+  const _amt = Web3.utils.toWei("10000", 'ether')
+  const recruterAddr = "0x34846BF00C64A56A5FB10a9EE7717aBC7887FEdf"
+  await LP1_deployed.transfer(recruterAddr, _amt);
+  await LP2_deployed.transfer(recruterAddr, _amt);
+  await LP3_deployed.transfer(recruterAddr, _amt);
+
   // deploy reward token
   await deployer.deploy(RewardToken);
   const rewardToken_deployed = await RewardToken.deployed();
