@@ -362,6 +362,7 @@ const App = () => {
             account={account}
             totalStaked={ totalStaked[page] }
             myStake={ myStake[page]}
+            stakerAddr={StakingManagerContract}
             userBalance={userBalance}
             unStakeHandler={unStakeHandler}
             stakeHandler={stakeHandler}

@@ -172,4 +172,19 @@ contract StakingManager is Ownable{
     function getStaked(uint256 _poolId) public view returns(uint256) {
         return poolStakers[_poolId][msg.sender].amount;
     }
+
+    /**
+     * @dev Get pool total staked
+     */
+    function getStaked(uint256 _poolId) public view returns(uint256) {
+        return poolStakers[_poolId].tokensStaked;
+    }
+
+    /**
+     * @dev Get current pool reward per share
+     */
+    function getRewardPerShare(uint256 _poolId) public view returns(uint256) {
+        return poolStakers[_poolId].accumulatedRewardsPerShare;
+    }
+    
 }
