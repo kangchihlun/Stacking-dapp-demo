@@ -116,29 +116,33 @@ const App = () => {
 
         // fetch total staked
         if(tokenStaking){
-          let totalStaked = await tokenStaking.methods
+          let ts = await tokenStaking.methods
           .getTotalStaked(page)
           .call();
           let convertedTotalBalance = window.web3.utils.fromWei(
-            totalStaked.toString(),
+            ts.toString(),
             'Ether'
           );
-          setContractBalance(convertedTotalBalance)
-          setTotalStaked([convertedTotalBalance,convertedTotalBalance,convertedTotalBalance]);
+          setContractBalance(convertedTotalBalance);
+          let tmpts = totalStaked;
+          tmpts[page] = convertedTotalBalance;
+          setTotalStaked(tmpts);
         }
         
         // fetch my total staked
         // not implemented yet
         if(tokenStaking){
-          let myStake = await tokenStaking.methods
+          let mySt = await tokenStaking.methods
           .getStaked(page,accounts[0])
           .call();
 
           let convertedBalance = window.web3.utils.fromWei(
-            myStake.toString(),
+            mySt.toString(),
             'Ether'
           );
-          setMyStake([convertedBalance, convertedBalance , convertedBalance]);
+          let mystk = myStake;
+          mystk[page] = convertedBalance;
+          setMyStake(mystk);
         }
         
         //  Fake APY values 
@@ -170,6 +174,7 @@ const App = () => {
 
   const changePage = (_page) => {
     setPage(poolID[_page]);
+    fetchDataFromBlockchain();
   };
 
   const stakeHandler = () => {

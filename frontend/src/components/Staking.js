@@ -61,7 +61,7 @@ const Staking = (props) => {
           Total Staked (by all users): {props.totalStaked} LP{props.page+1} Token
         </h4>
         <div>&nbsp;</div>
-        <h5>My Stake: {props.myStake} LP{props.page} Token </h5>
+        <h5>My Stake: {props.myStake} LP{props.page+1} Token </h5>
         <h5>
           My Estimated Reward:{' '}
           {((props.myStake * props.apy) / 36500).toFixed(3)} LP{props.page+1} Token
