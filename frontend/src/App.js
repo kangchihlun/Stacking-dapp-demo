@@ -43,6 +43,15 @@ const App = () => {
     ethEnabled();
   }, []);
 
+  // watch page change
+  useEffect(() => {
+    const syncdata = async () => {
+      fetchDataFromBlockchain();
+    };
+    syncdata();
+    
+  }, [page]);
+
   const fetchDataFromBlockchain = async () => {
     if (window.ethereum) {
       // await window.ethereum.send('eth_requestAccounts');
@@ -69,6 +78,8 @@ const App = () => {
 
       if (testTokenData) {
         let web3 = window.web3;
+
+        
         // LP token
         testTokenContract = new web3.eth.Contract(
           LPFactory.abi,
@@ -173,8 +184,8 @@ const App = () => {
   };
 
   const changePage = (_page) => {
+    
     setPage(poolID[_page]);
-    fetchDataFromBlockchain();
   };
 
   const stakeHandler = () => {
