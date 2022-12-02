@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import classes from './App.module.css';
-import LPFactory from '../src/abis/LPFactory.json';
-import TestTokenClaimer from '../src/abis/TestTokenClaimer.json';
-import StakingManager from '../src/abis/StakingManager.json';
+import LPFactory from './abis/LPFactory.json';
+import TestTokenClaimer from './abis/TestTokenClaimer.json';
+import StakingManager from './abis/StakingManager.json';
 import Staking from './components/Staking';
 import AdminTesting from './components/AdminTesting';
 import Navigation from './components/Navigation';
@@ -58,20 +58,27 @@ const App = () => {
       const networkType = await web3.eth.net.getNetworkType();
       setNetwork({ ...network, id: networkId, name: networkType });
 
-      console.log(`-##-## ${poolToken[page]}`);
+     
       //loading TestToken contract data
       // todo: load token data from staking manager
+      const testTokenData = LPFactory.networks[networkId];
+      console.log(`-##-## ${poolToken[page]}`);
+      let testTokenContract = null;
+      let tokenClaimer = null;
+      let tokenStaking = null;
 
-      if(true){ 
+      if (testTokenData) {
+        let web3 = window.web3;
         // LP token
-        const testTokenContract = new window.web3.eth.Contract(
+        console.log(LPFactory.abi);
+        testTokenContract = new web3.eth.Contract(
           LPFactory.abi,
           poolToken[page]
         );
         setLPToken(testTokenContract);
-
+        
         //  fetching balance of Testtoken and storing in state
-        let _balance = await LPToken.methods
+        let _balance = await testTokenContract.methods
           .balanceOf(accounts[0])
           .call();
         let convertedBalance = window.web3.utils.fromWei(
@@ -79,32 +86,21 @@ const App = () => {
           'Ether'
         );
         setUserBalance(convertedBalance);
-      }
-      
-      //fetching contract balance
-      //updating total staked balance
-      {
-        const tempBalance = StakingManager.networks[networkId];
-        let totalStaked = await StakingManager.methods
-          .balanceOf(tempBalance.address)
-          .call();
-  
-        let convertedBalance = window.web3.utils.fromWei(
-          totalStaked.toString(),
-          'Ether'
+      } else {
+        setAppStatus(false);
+        window.alert(
+          'TestToken contract is not deployed on this network, please change to testnet'
         );
-        //removing initial balance
-        setContractBalance(convertedBalance);
       }
       
-    
+
       //load Test TokenClaimer
       const tokenClaimerData = TestTokenClaimer.networks[networkId];
       if(tokenClaimerData) {
         let web3 = window.web3;
-        const tokenClaimer = new web3.eth.Contract(
+        tokenClaimer = new web3.eth.Contract(
           TestTokenClaimer.abi,
-          TestTokenClaimer.address
+          tokenClaimerData.address
         );
         setTestTokenClaimerContract(tokenClaimer);
       }
@@ -113,61 +109,65 @@ const App = () => {
       const tokenStakingData = StakingManager.networks[networkId];
       if (tokenStakingData) {
         let web3 = window.web3;
-        const tokenStaking = new web3.eth.Contract(
+        tokenStaking = new web3.eth.Contract(
           StakingManager.abi,
-          StakingManager.address
+          tokenStakingData.address
         );
         setStakingManagerContract(tokenStaking);
 
+        // fetch total staked
+        if(testTokenContract){
+          let totalStaked = await testTokenContract.methods
+          .balanceOf(tokenStakingData.address)
+          .call();
+          let convertedTotalBalance = window.web3.utils.fromWei(
+            totalStaked.toString(),
+            'Ether'
+          );
+          setContractBalance(convertedTotalBalance)
+        }
+        
 
-        //  fetching my total staked  and storing in state
-        let myStake = await StakingManager.methods
+        // fetch my total staked
+        // not implemented yet
+        if(false){
+          let myStake = await tokenStaking.methods
           .stakingBalance(accounts[0])
           .call();
 
-        let convertedBalance = window.web3.utils.fromWei(
-          myStake.toString(),
-          'Ether'
-        );
+          let convertedBalance = window.web3.utils.fromWei(
+            myStake.toString(),
+            'Ether'
+          );
 
-        let myCustomStake = await tokenStaking.methods
-          .customStakingBalance(accounts[0])
-          .call();
+          let myCustomStake = await tokenStaking.methods
+            .customStakingBalance(accounts[0])
+            .call();
 
-        let tempCustomdBalance = window.web3.utils.fromWei(
-          myCustomStake.toString(),
-          'Ether'
-        );
-        // Todo fetch 3rd staked balance
-        // kang added , has to change 
-        setMyStake([convertedBalance, tempCustomdBalance , tempCustomdBalance]);
+          let tempCustomdBalance = window.web3.utils.fromWei(
+            myCustomStake.toString(),
+            'Ether'
+          );
 
-
+          // Todo fetch 3rd staked balance
+          setMyStake([convertedBalance, tempCustomdBalance , tempCustomdBalance]);
+        }
+        
 
         //checking totalStaked
-        let tempTotalStaked = await tokenStaking.methods.totalStaked().call();
-        convertedBalance = window.web3.utils.fromWei(
+        let tempTotalStaked = await tokenStaking.methods.getStaked(page).call();
+        let convertedBalance = window.web3.utils.fromWei(
           tempTotalStaked.toString(),
           'Ether'
         );
-        let tempcustomTotalStaked = await tokenStaking.methods
-          .customTotalStaked()
-          .call();
-        let tempconvertedBalance = window.web3.utils.fromWei(
-          tempcustomTotalStaked.toString(),
-          'Ether'
-        );
-
-        // Todo fetch 3rd total staked balance
-        // kang added 
-        setTotalStaked([convertedBalance, tempconvertedBalance , tempconvertedBalance]);
+        setTotalStaked([tempTotalStaked,tempTotalStaked,tempTotalStaked]);
 
 
         //  APY values from contract
-        let tempApy = ((await tokenStaking.methods.defaultAPY().call()) / 1000) * 365;
-        let tempcustomApy = ((await tokenStaking.methods.customAPY().call()) / 1000) * 365;
-        let tempcustomApy2 = ((await tokenStaking.methods.customAPY().call()*0.45) / 1000) * 365;
-        setApy([tempApy, tempcustomApy, tempcustomApy2]);
+        // let tempApy = ((await tokenStaking.methods.defaultAPY().call()) / 1000) * 365;
+        // let tempcustomApy = ((await tokenStaking.methods.customAPY().call()) / 1000) * 365;
+        // let tempcustomApy2 = ((await tokenStaking.methods.customAPY().call()*0.45) / 1000) * 365;
+        // setApy([tempApy, tempcustomApy, tempcustomApy2]);
 
 
       } else {
