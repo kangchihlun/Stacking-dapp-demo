@@ -41,7 +41,7 @@ const Staking = (props) => {
         className={classes.stakeButton}
         onClick={() => {
           props.stakeHandler();
-          setInputValue('');
+          
         }}
       >
         <img src={stakeIcon} alt="stake icon" className={classes.stakeIcon} />
