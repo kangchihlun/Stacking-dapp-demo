@@ -30,9 +30,10 @@ const App = () => {
   const poolID = {"default":0,"custom":1,"custom2":2};
   // todo : fetch stake info from contract directly.
   const poolToken = [
-    "0x3f0a8CCDac3BEf5Dc4fAEB60170f926ECcfCBcCF",
-    "0x1Ac61Cb49828107f259459C1Ff6365dfEb4F5612",
-    "0xACA690b67737799AF5d428123A5bC2645AF16d3a"];
+    "0xDB4b9627844893469E308fA55003957a8304cE42",
+    "0x3d9e503547B3c13f11CBcbB4Dc72EA207E1fd67F",
+    "0x9c4419D1B1bF617C08100560F3877E415e2abd18"
+  ];
   useEffect(() => {
     //connecting to ethereum blockchain
     const ethEnabled = async () => {
@@ -69,7 +70,6 @@ const App = () => {
       if (testTokenData) {
         let web3 = window.web3;
         // LP token
-        console.log(LPFactory.abi);
         testTokenContract = new web3.eth.Contract(
           LPFactory.abi,
           poolToken[page]
@@ -131,7 +131,7 @@ const App = () => {
         // not implemented yet
         if(tokenStaking){
           let myStake = await tokenStaking.methods
-          .getStaked(page)
+          .getStaked(page,accounts[0])
           .call();
 
           let convertedBalance = window.web3.utils.fromWei(
@@ -169,7 +169,6 @@ const App = () => {
   };
 
   const changePage = (_page) => {
-    console.log(_page)
     setPage(poolID[_page]);
   };
 

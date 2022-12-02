@@ -7,7 +7,6 @@ const Navigation = (props) => {
   const changePool = (val) => {
     if (val === poolStatus) {
     } else {
-      console.log(`setPoolStatus ${val}`);
       setPoolStatus(val);
       props.changePage(val);
     }

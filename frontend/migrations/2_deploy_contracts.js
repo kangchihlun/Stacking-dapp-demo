@@ -87,4 +87,5 @@ module.exports = async function(deployer, network, accounts) {
   let amount_LP3 = await LP3_deployed.balanceOf(TestTokenClaimer_deployed.address)
   console.log("TestTokenClaimer LP3 balance:")
   console.log( BigInt(amount_LP3) )
+
 };

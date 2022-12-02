@@ -169,8 +169,8 @@ contract StakingManager is Ownable{
     /**
      * @dev Get user staked
      */
-    function getStaked(uint256 _poolId) public view returns(uint256) {
-        return poolStakers[_poolId][msg.sender].amount;
+    function getStaked(uint256 _poolId,address user) public view returns(uint256) {
+        return poolStakers[_poolId][user].amount;
     }
 
     /**
