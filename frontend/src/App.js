@@ -30,9 +30,9 @@ const App = () => {
   const poolID = {"default":0,"custom":1,"custom2":2};
   // todo : fetch stake info from contract directly.
   const poolToken = [
-    "0x5a9B1454Dc1daEc5fe19033e4910876FA318A0d9",
-    "0x75d1ce74cF00e7F13dC608fCe56245c7B39A67B5",
-    "0x07C774C3Cd3dF590C100aBa332e67F799efFA84f"];
+    "0x3f0a8CCDac3BEf5Dc4fAEB60170f926ECcfCBcCF",
+    "0x1Ac61Cb49828107f259459C1Ff6365dfEb4F5612",
+    "0xACA690b67737799AF5d428123A5bC2645AF16d3a"];
   useEffect(() => {
     //connecting to ethereum blockchain
     const ethEnabled = async () => {
@@ -130,27 +130,16 @@ const App = () => {
 
         // fetch my total staked
         // not implemented yet
-        if(false){
+        if(true){
           let myStake = await tokenStaking.methods
-          .stakingBalance(accounts[0])
+          .getStaked(page)
           .call();
 
           let convertedBalance = window.web3.utils.fromWei(
             myStake.toString(),
             'Ether'
           );
-
-          let myCustomStake = await tokenStaking.methods
-            .customStakingBalance(accounts[0])
-            .call();
-
-          let tempCustomdBalance = window.web3.utils.fromWei(
-            myCustomStake.toString(),
-            'Ether'
-          );
-
-          // Todo fetch 3rd staked balance
-          setMyStake([convertedBalance, tempCustomdBalance , tempCustomdBalance]);
+          setMyStake([convertedBalance, convertedBalance , convertedBalance]);
         }
         
 
@@ -362,7 +351,7 @@ const App = () => {
             account={account}
             totalStaked={ totalStaked[page] }
             myStake={ myStake[page]}
-            stakerAddr={StakingManagerContract}
+            stakerAddr={StakingManagerContract._address}
             userBalance={userBalance}
             unStakeHandler={unStakeHandler}
             stakeHandler={stakeHandler}

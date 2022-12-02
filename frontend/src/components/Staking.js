@@ -22,8 +22,8 @@ const Staking = (props) => {
     <div className={classes.Staking}>
       <img src={icon} alt="logo" className={classes.icon} />
       <h1> Yield Farming / Token Staking dApp</h1>
-      <p>Contract Address: {props.stakerAddr}</p>
-      <p>{props.account}</p>
+      <p> Staking Contract Address: {props.stakerAddr}</p>
+      <p> My Account : {props.account}</p>
       <h3>
         {props.apy}% (APY) - {props.apy / 365}% Daily Earnings
       </h3>
